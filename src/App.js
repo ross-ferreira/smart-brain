@@ -8,7 +8,7 @@ import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import Modal from "./components/Modal/Modal";
-import Profile from './components/Profile/Profile';
+import Profile from "./components/Profile/Profile";
 import "./App.css";
 
 const particlesOptions = {
@@ -37,6 +37,8 @@ const initialState = {
     email: "",
     entries: 0,
     joined: "",
+    pet: "",
+    age: "",
   },
 };
 
@@ -120,14 +122,15 @@ class App extends Component {
     this.setState({ route: route });
   };
 
-  toggleModal = ()=>{
-    this.setState(prevState => ({...prevState, 
-      isProfileOpen:!prevState.isProfileOpen
-    }))
-  }
+  toggleModal = () => {
+    this.setState((prevState) => ({
+      ...prevState,
+      isProfileOpen: !prevState.isProfileOpen,
+    }));
+  };
 
   render() {
-    const { isSignedIn, imageUrl, route, box, isProfileOpen } = this.state;
+    const { isSignedIn, imageUrl, route, box, isProfileOpen,user } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
@@ -138,7 +141,11 @@ class App extends Component {
         />
         {isProfileOpen && (
           <Modal>
-            <Profile isProfileOpen={isProfileOpen} toggleModal={this.toggleModal}/>
+            <Profile
+              isProfileOpen={isProfileOpen}
+              toggleModal={this.toggleModal}
+              user={user}
+            />
           </Modal>
         )}
         {route === "home" ? (
