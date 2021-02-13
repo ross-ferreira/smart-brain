@@ -48,6 +48,40 @@ class App extends Component {
     this.state = initialState;
   }
 
+  componentDidMount() {
+    const token = window.sessionStorage.getItem("token");
+    if (token) {
+      fetch("http://localhost:3000/signin", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          // the standard way is to include 'Bearer '+token
+          Authorization: token,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.id) {
+            fetch(`http://localhost:3000/profile/${data.id}`, {
+              method: "get",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+            })
+              .then((res) => res.json())
+              .then((user) => {
+                if (user && user.email) {
+                  this.loadUser(user)
+                  this.onRouteChange("home");
+                }
+              });
+          }
+        })
+        .catch(console.log);
+    }
+  }
+
   loadUser = (data) => {
     this.setState({
       user: {
@@ -56,6 +90,8 @@ class App extends Component {
         email: data.email,
         entries: data.entries,
         joined: data.joined,
+        age: data.age,
+        pet: data.pet,
       },
     });
   };
@@ -130,7 +166,14 @@ class App extends Component {
   };
 
   render() {
-    const { isSignedIn, imageUrl, route, box, isProfileOpen,user } = this.state;
+    const {
+      isSignedIn,
+      imageUrl,
+      route,
+      box,
+      isProfileOpen,
+      user,
+    } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
@@ -145,6 +188,7 @@ class App extends Component {
               isProfileOpen={isProfileOpen}
               toggleModal={this.toggleModal}
               user={user}
+              loadUser={this.loadUser}
             />
           </Modal>
         )}
